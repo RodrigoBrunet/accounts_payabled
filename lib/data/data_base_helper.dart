@@ -58,6 +58,34 @@ class DataBaseHelper {
     });
   }
 
+  Future<List<Account>> queryContasPagas() async {
+    Database db = await instance.database;
+    final List<Map<String, dynamic>> maps = await db.query(
+      table,
+      where: 'paid = ?',
+      whereArgs: [1],
+    );
+
+    return List.generate(maps.length, (i) {
+      return Account(
+        id: maps[i]['id'],
+        description: maps[i]['description'],
+        value: maps[i]['value'],
+        dueDate: maps[i]['dueDate'],
+        paid: maps[i]['paid'] == 1,
+      );
+    });
+  }
+
+  Future<int> delete(int id) async {
+    Database db = await instance.database;
+    return await db.delete(
+      table,
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+  }
+
   Future<int> updateStatus(int id, bool paid) async {
     Database db = await instance.database;
     return await db.update(
@@ -66,5 +94,27 @@ class DataBaseHelper {
       where: 'id = ?',
       whereArgs: [id],
     );
+  }
+
+  Future<double> calcTotalPaidOnMouth() async {
+    Database db = await instance.database;
+    DateTime now = DateTime.now();
+    String firstDayOfMonth =
+        DateTime(now.year, now.month, 1).toIso8601String().split('T')[0];
+    String lastDayOfMonth =
+        DateTime(now.year, now.month + 1, 0).toIso8601String().split('T')[0];
+
+    final List<Map<String, dynamic>> filteredMaps = await db.query(
+      table,
+      where: "paid = ? AND dueDate BETWEEN ? AND ?",
+      whereArgs: [1, firstDayOfMonth, lastDayOfMonth],
+    );
+
+    double total = 0;
+    for (var map in filteredMaps) {
+      total += map['value'];
+    }
+
+    return total;
   }
 }
