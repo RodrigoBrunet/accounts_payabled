@@ -1,5 +1,6 @@
+import 'package:accounts_payable/resources/theme/my_theme.dart';
 import 'package:flutter/material.dart';
-import 'pages/account_payabled_page.dart';
+import 'views/account_payabled_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -10,11 +11,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
+      theme: myTheme,
       home: const AccountPayabledPage(),
     );
   }
