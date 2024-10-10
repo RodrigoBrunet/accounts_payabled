@@ -1,6 +1,7 @@
 import 'package:accounts_payable/data/data_base_helper.dart';
 import 'package:accounts_payable/models/account_model.dart';
-import 'package:accounts_payable/page/details_account_page.dart';
+import 'package:accounts_payable/pages/details_account_page.dart';
+import 'package:accounts_payable/pages/grafic_info_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_masked_text2/flutter_masked_text2.dart';
 
@@ -43,6 +44,15 @@ class _AccountPayabledPageState extends State<AccountPayabledPage> {
                 context,
                 MaterialPageRoute(
                     builder: (context) => const DetailsAccountPage()),
+              );
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.show_chart),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const GraficInfoPage()),
               );
             },
           ),

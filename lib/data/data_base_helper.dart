@@ -1,4 +1,5 @@
 import 'package:accounts_payable/models/account_model.dart';
+import 'package:intl/intl.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
@@ -11,13 +12,11 @@ class DataBaseHelper {
   static final DataBaseHelper instance = DataBaseHelper._privateConstructor();
 
   static Database? _database;
+
   Future<Database> get database async {
-    if (_database != null) {
-      return _database!;
-    } else {
-      _database = await _initDatabase();
-      return _database!;
-    }
+    if (_database != null) return _database!;
+    _database = await _initDatabase();
+    return _database!;
   }
 
   _initDatabase() async {
@@ -36,11 +35,51 @@ class DataBaseHelper {
         paid INTEGER NOT NULL DEFAULT 0
       )
     ''');
+
+    await db.execute('''
+      CREATE TABLE totais_mensais (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        mes TEXT NOT NULL,
+        total REAL NOT NULL
+    )
+  ''');
   }
 
   Future<int> insert(Account account) async {
     Database db = await instance.database;
     return await db.insert(table, account.toMap());
+  }
+
+  Future<int> insertOrUpadateTotalMensal(String mes, double total) async {
+    Database db = await instance.database;
+    final List<Map<String, dynamic>> existing = await db.query(
+      'totais_mensais',
+      where: 'mes = ?',
+      whereArgs: [mes],
+    );
+
+    if (existing.isEmpty) {
+      Map<String, dynamic> row = {
+        'mes': mes,
+        'total': total,
+      };
+      int result = await db.insert('totais_mensais', row);
+      return result;
+    } else {
+      int result = await db.update(
+        'totais_mensais',
+        {'total': total},
+        where: 'mes = ?',
+        whereArgs: [mes],
+      );
+      return result;
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> queryTotaisMensais() async {
+    Database db = await instance.database;
+    final List<Map<String, dynamic>> result = await db.query('totais_mensais');
+    return result;
   }
 
   Future<List<Account>> queryAllRows() async {
@@ -114,6 +153,9 @@ class DataBaseHelper {
     for (var map in filteredMaps) {
       total += map['value'];
     }
+
+    String mesAtual = DateFormat('yyyy-MM').format(DateTime.now());
+    await insertOrUpadateTotalMensal(mesAtual, total);
 
     return total;
   }
