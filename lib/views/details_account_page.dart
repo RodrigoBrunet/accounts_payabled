@@ -1,6 +1,8 @@
 import 'package:accounts_payable/data/data_base_helper.dart';
 import 'package:accounts_payable/models/account_model.dart';
+import 'package:accounts_payable/resources/strings/string_resourses.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class DetailsAccountPage extends StatefulWidget {
   const DetailsAccountPage({super.key});
@@ -20,11 +22,29 @@ class _DetailsAccountPageState extends State<DetailsAccountPage> {
     _totalPaymentInTheMonth = DataBaseHelper.instance.calcTotalPaidOnMouth();
   }
 
+  String _converteData(Account account) {
+    DateFormat inputFormat = DateFormat('yyyy-MM-dd');
+    DateFormat dbFormat = DateFormat('dd/MM/yyyy');
+
+    DateTime dateTime = inputFormat.parse(account.dueDate);
+    String formattedDate = dbFormat.format(dateTime);
+
+    return formattedDate;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Contas Pagas'),
+        centerTitle: true,
+        title: const Text(
+          StringResources.titulo2,
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
       ),
       body: Column(
         children: <Widget>[
@@ -47,9 +67,16 @@ class _DetailsAccountPageState extends State<DetailsAccountPage> {
                         return Container(); // Excluir itens não pagos
                       }
                       return ListTile(
-                        title: Text(account.description),
+                        title: Text(
+                          account.description,
+                          style: const TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.bold),
+                        ),
                         subtitle: Text(
-                            'R\$ ${account.value} - Vencimento: ${account.dueDate}'),
+                          'R\$ ${account.value} - Pago em: ${_converteData(account)}',
+                          style: const TextStyle(
+                              fontSize: 14, fontWeight: FontWeight.w400),
+                        ),
                       );
                     },
                   );
@@ -68,7 +95,12 @@ class _DetailsAccountPageState extends State<DetailsAccountPage> {
                   return Text('Erro: ${snapshot.error}');
                 } else {
                   return Text(
-                      'Total Pago no Mês: R\$ ${snapshot.data!.toStringAsFixed(2)}');
+                    'Total Pago no Mês: R\$ ${snapshot.data!.toStringAsFixed(2)}',
+                    style: const TextStyle(
+                      fontSize: 26,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  );
                 }
               },
             ),

@@ -14,6 +14,7 @@ final ThemeData myTheme = ThemeData(
     onError: Colors.white,
     brightness: Brightness.light,
   ),
+  appBarTheme: const AppBarTheme(iconTheme: IconThemeData(color: Colors.white)),
   textTheme: TextTheme(
     displayLarge: const TextStyle(color: Color(0xFF3E0065)), // Roxo profundo
     bodyLarge: const TextStyle(color: Colors.black), // Preto

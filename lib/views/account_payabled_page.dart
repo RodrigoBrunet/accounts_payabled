@@ -39,6 +39,22 @@ class _AccountPayabledPageState extends State<AccountPayabledPage> {
     return textConverter / 100;
   }
 
+  _criaContaAPagar() {
+    Account newAccount = Account(
+      description: _descriptionController.text,
+      value: _converteValor(),
+      dueDate: _dueDateController.text,
+      paid: false,
+    );
+    return newAccount;
+  }
+
+  _limpaCampos() {
+    _descriptionController.clear();
+    _valueController.updateValue(0);
+    _dueDateController.text = '';
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -46,11 +62,19 @@ class _AccountPayabledPageState extends State<AccountPayabledPage> {
         centerTitle: true,
         title: const Text(
           StringResources.titulo,
-          style: TextStyle(color: Colors.white),
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+          ),
         ),
         actions: <Widget>[
           IconButton(
-            icon: const Icon(Icons.payment),
+            icon: const Icon(
+              Icons.payment,
+              color: Colors.white,
+              size: 36,
+            ),
             onPressed: () {
               Navigator.push(
                 context,
@@ -130,16 +154,9 @@ class _AccountPayabledPageState extends State<AccountPayabledPage> {
                             minimumSize: const Size(double.infinity, 50)),
                         onPressed: () async {
                           if (_formKey.currentState!.validate()) {
-                            Account newAccount = Account(
-                              description: _descriptionController.text,
-                              value: _converteValor(),
-                              dueDate: _dueDateController.text,
-                              paid: false,
-                            );
-                            await DataBaseHelper.instance.insert(newAccount);
-                            _descriptionController.clear();
-                            _valueController.updateValue(0);
-                            _dueDateController.text = '';
+                            await DataBaseHelper.instance
+                                .insert(_criaContaAPagar());
+                            _limpaCampos();
                             _refreshData();
                           }
                         },
@@ -168,9 +185,15 @@ class _AccountPayabledPageState extends State<AccountPayabledPage> {
                       itemBuilder: (context, index) {
                         Account account = snapshot.data![index];
                         return ListTile(
-                          title: Text(account.description),
+                          title: Text(
+                            account.description,
+                            style: const TextStyle(
+                                fontSize: 18, fontWeight: FontWeight.bold),
+                          ),
                           subtitle: Text(
-                            'R\$ ${account.value} - Data do pagamento: ${account.dueDate}',
+                            account.paid
+                                ? 'Valor pago - R\$ ${account.value}'
+                                : 'Valor em aberto - R\$ ${account.value}',
                             style: account.paid
                                 ? const TextStyle(
                                     decoration: TextDecoration.lineThrough,

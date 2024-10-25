@@ -1,5 +1,6 @@
 class StringResources {
   static const String titulo = 'Contas a Pagar';
+  static const String titulo2 = 'Contas Pagas';
   static const String labelTextInput1 = 'Descrição';
   static const String labelTextInput2 = 'Valor';
   static const String labelTextInput3 = 'Data do pagamento';
