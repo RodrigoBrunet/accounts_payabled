@@ -1,7 +1,5 @@
 import 'package:accounts_payable/data/data_base_helper.dart';
 import 'package:accounts_payable/models/account_model.dart';
-import 'package:accounts_payable/resources/strings/string_resourses.dart';
-import 'package:accounts_payable/views/components/custom_text_form_field.dart';
 import 'package:accounts_payable/views/details_account_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_masked_text2/flutter_masked_text2.dart';
@@ -38,42 +36,18 @@ class _AccountPayabledPageState extends State<AccountPayabledPage> {
     return textConverter / 100;
   }
 
-  _criaContaAPagar() {
-    Account newAccount = Account(
-      description: _descriptionController.text,
-      value: _converteValor(),
-      dueDate: _dueDateController.text,
-      paid: false,
-    );
-    return newAccount;
-  }
-
-  _limpaCampos() {
-    _descriptionController.clear();
-    _valueController.updateValue(0);
-    _dueDateController.text = '';
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
         title: const Text(
-          StringResources.titulo,
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-          ),
+          'Contas a pagar',
+          style: TextStyle(color: Colors.white),
         ),
         actions: <Widget>[
           IconButton(
-            icon: const Icon(
-              Icons.payment,
-              color: Colors.white,
-              size: 36,
-            ),
+            icon: const Icon(Icons.payment),
             onPressed: () {
               Navigator.push(
                 context,
@@ -103,13 +77,16 @@ class _AccountPayabledPageState extends State<AccountPayabledPage> {
                 key: _formKey,
                 child: Column(
                   children: <Widget>[
-                    CustomTextFormField(
+                    TextFormField(
                       controller: _descriptionController,
-                      labelText: StringResources.labelTextInput1,
-                      inputType: TextInputType.name,
-                      inputValidator: (value) {
+                      decoration: const InputDecoration(
+                          labelText: 'Descrição',
+                          border: OutlineInputBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10)))),
+                      validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return StringResources.inputvalidatorInput1;
+                          return 'Insira uma descrição';
                         } else {
                           return null;
                         }
@@ -118,13 +95,17 @@ class _AccountPayabledPageState extends State<AccountPayabledPage> {
                     const SizedBox(
                       height: 18,
                     ),
-                    CustomTextFormField(
+                    TextFormField(
                       controller: _valueController,
-                      labelText: StringResources.labelTextInput2,
-                      inputType: TextInputType.number,
-                      inputValidator: (value) {
+                      decoration: const InputDecoration(
+                          labelText: 'Valor',
+                          border: OutlineInputBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10)))),
+                      keyboardType: TextInputType.number,
+                      validator: (value) {
                         if (value!.startsWith('0,00') || value.isEmpty) {
-                          return StringResources.inputvalidatorInput2;
+                          return 'Insira um valor';
                         }
                         return null;
                       },
@@ -132,13 +113,17 @@ class _AccountPayabledPageState extends State<AccountPayabledPage> {
                     const SizedBox(
                       height: 18,
                     ),
-                    CustomTextFormField(
+                    TextFormField(
+                      keyboardType: TextInputType.number,
                       controller: _dueDateController,
-                      labelText: StringResources.labelTextInput3,
-                      inputType: TextInputType.number,
-                      inputValidator: (value) {
+                      decoration: const InputDecoration(
+                          labelText: 'Data do pagamento',
+                          border: OutlineInputBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10)))),
+                      validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return StringResources.inputvalidatorInput3;
+                          return 'Insira a data do pagamento';
                         }
                         return null;
                       },
@@ -153,14 +138,21 @@ class _AccountPayabledPageState extends State<AccountPayabledPage> {
                             minimumSize: const Size(double.infinity, 50)),
                         onPressed: () async {
                           if (_formKey.currentState!.validate()) {
-                            await DataBaseHelper.instance
-                                .insert(_criaContaAPagar());
-                            _limpaCampos();
+                            Account newAccount = Account(
+                              description: _descriptionController.text,
+                              value: _converteValor(),
+                              dueDate: _dueDateController.text,
+                              paid: false,
+                            );
+                            await DataBaseHelper.instance.insert(newAccount);
+                            _descriptionController.clear();
+                            _valueController.updateValue(0);
+                            _dueDateController.text = '';
                             _refreshData();
                           }
                         },
                         child: const Text(
-                          StringResources.elevatedButtonText,
+                          'Cadastrar conta',
                           style: TextStyle(color: Colors.white, fontSize: 20),
                         ))
                   ],
@@ -177,22 +169,16 @@ class _AccountPayabledPageState extends State<AccountPayabledPage> {
                     return Center(child: Text('Erro: ${snapshot.error}'));
                   } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                     return const Center(
-                        child: Text(StringResources.feedbackText));
+                        child: Text('Nenhuma conta cadastrada.'));
                   } else {
                     return ListView.builder(
                       itemCount: snapshot.data!.length,
                       itemBuilder: (context, index) {
                         Account account = snapshot.data![index];
                         return ListTile(
-                          title: Text(
-                            account.description,
-                            style: const TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.bold),
-                          ),
+                          title: Text(account.description),
                           subtitle: Text(
-                            account.paid
-                                ? 'Valor pago - R\$ ${account.value}'
-                                : 'Valor em aberto - R\$ ${account.value}',
+                            'R\$ ${account.value} - Data do pagamento: ${account.dueDate}',
                             style: account.paid
                                 ? const TextStyle(
                                     decoration: TextDecoration.lineThrough,
