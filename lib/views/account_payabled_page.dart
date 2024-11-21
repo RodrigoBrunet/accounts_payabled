@@ -62,7 +62,7 @@ class _AccountPayabledPageState extends State<AccountPayabledPage> {
         title: const Text(
           StringResources.titulo,
           style: TextStyle(
-            color: Colors.white,
+            color: Colors.black,
             fontSize: 24,
             fontWeight: FontWeight.bold,
           ),
@@ -70,8 +70,8 @@ class _AccountPayabledPageState extends State<AccountPayabledPage> {
         actions: <Widget>[
           IconButton(
             icon: const Icon(
-              Icons.payment,
-              color: Colors.white,
+              Icons.list,
+              color: Colors.black,
               size: 36,
             ),
             onPressed: () {
@@ -82,15 +82,6 @@ class _AccountPayabledPageState extends State<AccountPayabledPage> {
               );
             },
           ),
-          // IconButton(
-          //   icon: const Icon(Icons.show_chart),
-          //   onPressed: () {
-          //     Navigator.push(
-          //       context,
-          //       MaterialPageRoute(builder: (context) => const GraficInfoPage()),
-          //     );
-          //   },
-          // ),
         ],
       ),
       body: Padding(
@@ -148,6 +139,7 @@ class _AccountPayabledPageState extends State<AccountPayabledPage> {
                     ),
                     ElevatedButton(
                         style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.blue.withOpacity(0.15),
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(10)),
                             minimumSize: const Size(double.infinity, 50)),
@@ -161,7 +153,7 @@ class _AccountPayabledPageState extends State<AccountPayabledPage> {
                         },
                         child: const Text(
                           StringResources.elevatedButtonText,
-                          style: TextStyle(color: Colors.white, fontSize: 20),
+                          style: TextStyle(color: Colors.black, fontSize: 20),
                         ))
                   ],
                 ),

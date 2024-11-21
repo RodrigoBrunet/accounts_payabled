@@ -47,7 +47,7 @@ class _AccountPayabledPageState extends State<AccountPayabledPage> {
         ),
         actions: <Widget>[
           IconButton(
-            icon: const Icon(Icons.payment),
+            icon: const Icon(Icons.list),
             onPressed: () {
               Navigator.push(
                 context,
@@ -56,15 +56,6 @@ class _AccountPayabledPageState extends State<AccountPayabledPage> {
               );
             },
           ),
-          // IconButton(
-          //   icon: const Icon(Icons.show_chart),
-          //   onPressed: () {
-          //     Navigator.push(
-          //       context,
-          //       MaterialPageRoute(builder: (context) => const GraficInfoPage()),
-          //     );
-          //   },
-          // ),
         ],
       ),
       body: Padding(
