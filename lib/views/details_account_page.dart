@@ -40,7 +40,7 @@ class _DetailsAccountPageState extends State<DetailsAccountPage> {
         title: const Text(
           StringResources.titulo2,
           style: TextStyle(
-            color: Colors.white,
+            color: Colors.black,
             fontSize: 24,
             fontWeight: FontWeight.bold,
           ),
